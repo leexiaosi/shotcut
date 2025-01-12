@@ -1,4 +1,4 @@
-name: build-shotcut-linux
+name: build-shotcut-https-linux
 
 on:
   workflow_dispatch:
