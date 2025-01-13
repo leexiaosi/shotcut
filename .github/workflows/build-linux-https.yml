@@ -1,0 +1,30 @@
+name: build-shotcut-https-linux
+
+on:
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: mltframework/shotcut-build:qt6.4.3-ubuntu20.04
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Support SSL/HTTPS
+        run: |
+          echo Preparing version
+          echo $(date +"%y.%m.%d") > VERSION
+          VERSION=$(cat VERSION)
+          echo VERSION=$VERSION
+          FILENAME_VERSION=$(echo $VERSION | tr -d .)
+          cd scripts
+          echo Making build script config file
+          echo CLEANUP=0 > build-shotcut.conf
+          echo FFMPEG_SUPPORT_SSL=1 > build-shotcut.conf
+          echo SHOTCUT_VERSION=\"$VERSION\" >> build-shotcut.conf
+          docker run -v $PWD:/root/shotcut $IMAGE_NAME
+          echo Renaming build artifacts
+          mv shotcut.txz shotcut-https-linux-x86_64-$FILENAME_VERSION.txz
